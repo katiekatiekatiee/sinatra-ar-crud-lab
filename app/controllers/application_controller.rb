@@ -9,6 +9,7 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
+    erb :index
   end
 
   get '/articles' do
@@ -17,7 +18,13 @@ class ApplicationController < Sinatra::Base
   end
  
   get '/articles/new' do
+    @article = Article.new
     erb :new
+  end
+  
+  post '/articles' do
+    @article = Article.new(params)
+    redirect :"/articles/#{@article.id}"
   end
   
   get '/articles/:id' do
@@ -25,10 +32,20 @@ class ApplicationController < Sinatra::Base
     erb :show
   end
 
-  post '/articles' do
-    @article = Article.new(params)
-    redirect :"/articles/#{@article.id}"
+  get '/articles/:id/edit' do
+    @article = Article.find(params[:id])
+    erb :edit
+  end
+
+  patch 'articles/:id' do
+    @article = Article.find(params[:id])
+    @article.update(params)
+    redirect "/articles/#{@article.id}"
+  end
+  
+  delete '/articles/:id' do
+    Article.delete(params[:id])
+    redrect "/articles"
   end
  
-
 end
